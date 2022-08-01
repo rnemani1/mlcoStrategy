@@ -1,0 +1,35 @@
+EXECUTION ERRORS:
+
+ERROR #1:
+    Traceback (most recent call last):
+    File "/Users/rnemani/Library/Python/3.8/lib/python/site-packages/selenium/webdriver/common/service.py", line 71, in start
+        self.process = subprocess.Popen(cmd, env=self.env,
+    File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.8/lib/python3.8/subprocess.py", line 858, in __init__
+        self._execute_child(args, executable, preexec_fn, close_fds,
+    File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.8/lib/python3.8/subprocess.py", line 1704, in _execute_child
+        raise child_exception_type(errno_num, err_msg, err_filename)
+    FileNotFoundError: [Errno 2] No such file or directory: 'chromedriver'
+
+    SOLUTION:
+        Install correct chromedriver https://chromedriver.chromium.org/downloads based on Chrome Version, Device Specifications. 
+        set DRIVER_PATH in corrected.py to chromedriver path, as follows:
+            DRIVER_PATH = '/Users/rnemani/Downloads/web_scrapper/chromedriver'
+
+ERROR #2: 
+    ModuleNotFoundError: No module named 'google'
+
+    SOLUTION: 
+        pip3 install --upgrade google-api-python-client
+
+ERROR #3: 
+    ImportError: cannot import name 'firestore' from 'google.cloud' (unknown location)
+
+    SOLUTION: 
+        pip3 install google-cloud-core
+        pip3 install google-cloud-firestore
+
+ERROR #4:
+    ModuleNotFoundError: No module named 'pandas'
+
+    SOLUTION:
+        pip3 install pandas
