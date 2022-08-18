@@ -1,6 +1,7 @@
 from pickle import TRUE
 from telnetlib import DO
 from termios import TIOCPKT_DOSTOP
+from this import d
 from dotenv import load_dotenv
 from requests import TooManyRedirects
 load_dotenv(".env", override=True)
@@ -24,6 +25,19 @@ def open(league, uTeam, fTeam, uSpread, uLead):
     })
 
     remDuplicates('open case')
+
+    for document in firestoreRef.collection(u'open case').stream():
+        docID = document.id
+
+        for doc2 in firestoreRef.collection(u'open case').stream():
+            doc2ID = doc2.id
+            
+            if(docID != doc2ID):
+                if(document.get('fTeam') == doc2.get('fTeam') and
+                    document.get('league') == doc2.get('league') and
+                    float(document.get('uSpread')[1:]) > float(doc2.get('uSpread')[1:]) and
+                    document.get('uTeam') == doc2.get('uTeam')):
+                        firestoreRef.collection(u'open case').document(doc2.id).delete()
 
 def fmlTarget(fmLine):
     
@@ -62,11 +76,13 @@ def in_(uTeam, uLead, fLead, umLine, fmLine):
                 u'i_uLead': i_uLead, 
                 u'i_fmLine': i_fmLine,
                 u'i_fmlTarget': i_fmlTarget,
+                u'isQ4': 'FALSE',
                 u'league': document.get('league'),
                 u'uTeam': document.get('uTeam'),
                 u'fTeam': document.get('fTeam'),
                 u'uSpread': document.get('uSpread'),
                 u'uLead': document.get('uLead'),
+                u'open_ts': document.get('open_ts'),
                 u'in_ts': str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
                 
             })
@@ -111,7 +127,10 @@ def out(uTeam, umLine, fmLine):
                 u'uTeam': document.get('uTeam'),
                 u'fTeam': document.get('fTeam'),
                 u'uSpread': document.get('uSpread'),
-                u'uLead': document.get('uLead'), 
+                u'uLead': document.get('uLead'),
+                u'open_ts': document.get('open_ts'),
+                u'in_ts': document.get('in_ts'),
+                u'isQ4': document.get('isQ4'),
                 u'out_ts': str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
                 
             })
@@ -125,30 +144,39 @@ def export():
 
     firestoreRef = firestore.Client(project='vegas-mlcostrategy')
     collection_open = firestoreRef.collection('open case')
+    collection_archive = firestoreRef.collection('archive')
 
     for document in collection_open.stream():
         #['collection','league', 'uTeam', 'fTeam', 'uSpread', 'uLead', 'i_uLead', 'i_fmLine', 'i_fmlTarget', 'o_caseHit', 'o_fmLine']
-        data.append(['open', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), "NULL", "NULL", "NULL", "NULL", "NULL", document.get('open_ts'), "NULL", "NULL"])
-
+        data.append(['open', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), "NULL", "NULL", "NULL", "NULL", "NULL", document.get('open_ts'), "NULL", "NULL", "NULL"])
+   
     collection_in = firestoreRef.collection('in case')
 
     for document in collection_in.stream():
         #['collection','league', 'uTeam', 'fTeam', 'uSpread', 'uLead', 'i_uLead', 'i_fmLine', 'i_fmlTarget', 'o_caseHit', 'o_fmLine']
-        data.append(['in', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), document.get('i_uLead'), document.get('i_fmLine'), document.get('i_fmlTarget'), "NULL", "NULL", document.get('open_ts'), document.get('in_ts'), "NULL"])
+        data.append(['in', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), document.get('i_uLead'), document.get('i_fmLine'), document.get('i_fmlTarget'), "NULL", "NULL", document.get('open_ts'), document.get('in_ts'), "NULL", document.get('isQ4')])
 
     collection_out = firestoreRef.collection('out case')
 
     for document in collection_out.stream():
         #['collection','league', 'uTeam', 'fTeam', 'uSpread', 'uLead', 'i_uLead', 'i_fmLine', 'i_fmlTarget', 'o_caseHit', 'o_fmLine']
-        data.append(['in', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), document.get('i_uLead'), document.get('i_fmLine'), document.get('i_fmlTarget'), document.get('o_caseHit'), document.get('o_fmLine'), document.get('open_ts'), document.get('in_ts'), document.get('out_ts')])
+        data.append(['out', document.get('league'), document.get('uTeam'), document.get('fTeam'), document.get('uSpread'), document.get('uLead'), document.get('i_uLead'), document.get('i_fmLine'), document.get('i_fmlTarget'), document.get('o_caseHit'), document.get('o_fmLine'), document.get('open_ts'), document.get('in_ts'), document.get('out_ts'), document.get('isQ4')])
 
-    df = pd.DataFrame(data, columns=['collection','league', 'uTeam', 'fTeam', 'uSpread', 'uLead', 'i_uLead', 'i_fmLine', 'i_fmlTarget', 'o_caseHit', 'o_fmLine', 'open_ts', 'in_ts', 'out_ts'])
+    df = pd.DataFrame(data, columns=['collection','league', 'uTeam', 'fTeam', 'uSpread', 'uLead', 'i_uLead', 'i_fmLine', 'i_fmlTarget', 'o_caseHit', 'o_fmLine', 'open_ts', 'in_ts', 'out_ts', 'isQ4'])
     df.to_csv(f'export.csv', index=False)
+
+    #col_list = df["Courses"].values.tolist()
+    #dict(map(lambda el  : (el, list(nums).count(el)), nums))
+
+    league_list = df['league'].values.tolist()
+    print(dict(map(lambda x  : (x, list(league_list).count(x)), league_list)))
 
 def remDuplicates(collection):
 
     firestoreRef = firestore.Client(project='vegas-mlcostrategy')
     collection = firestoreRef.collection(collection)
+
+    docList = []
 
     for document in collection.stream():
         docID = document.id
@@ -161,6 +189,13 @@ def remDuplicates(collection):
                     document.get('league') == doc2.get('league') and
                     document.get('uSpread') == doc2.get('uSpread') and
                     document.get('uTeam') == doc2.get('uTeam')):
-                        collection.document(doc2ID).delete()
+                        docList.append(doc2ID)
 
-export()
+    docList = [*set(docList)]
+
+    for d in docList[1:]:
+        collection.document(d).delete()
+
+#CALL: 
+#export()
+

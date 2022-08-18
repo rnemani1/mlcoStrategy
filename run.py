@@ -1,19 +1,14 @@
 from curses import wrapper
 import scraper
+import sys
 
 def main(stdscr):
     stdscr.clear()
 
-    scraper.run("https://sportsbook.fanduel.com/basketball/wnba/seattle-storm-@-washington-mystics-31625562", stdscr)
-
-    stdscr.getch()
-
-def add_new_string(string, stdscr):
-    stdscr.clear()
-
-    stdscr.addstr('Hello')
-
-    stdscr.refresh()
-    stdscr.getch()
+    try:
+        URL = sys.argv[1]
+        scraper.run(URL, stdscr)
+    except IndexError:
+        raise Exception("Execute: python3 run.py URL")
 
 wrapper(main)

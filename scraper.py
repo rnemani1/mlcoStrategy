@@ -35,7 +35,6 @@ def time(stdscr):
 
         sleep(1)
     
-
 def get_league(URL):
     return(URL.split("/", 10)[4])
 
@@ -67,7 +66,7 @@ def get_team(URL):
 
     return(teams)
 
-def run(URL, stdscr):
+def run(URL, stdscr): 
     #initialzes variables
     driver = None
 
@@ -114,9 +113,13 @@ def run(URL, stdscr):
             
             spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
             spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
+            #spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[1]/span').text
+            #spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[4]/span').text
 
-            money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[3]/span').text
+            money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[3]/span').text 
             money_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[6]/span').text
+            #money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text 
+            #money_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
 
             teams = get_team(URL)
 
@@ -175,21 +178,21 @@ def run(URL, stdscr):
                     changed = f"{team_2}'s money | {old_money_team_2} -> {money_team_2}"
                 """
 
-                if old_spread_team_1 != spread_team_1 or old_spread_team_2 != spread_team_2:
-                    #open(league, uTeam, fTeam, uSpread, uLead)
-                    firestoreManager.open(get_league(URL), underdog, favorite, underdog_spread, int(underdog_score) - int(favorite_score))
-                    changed = f"{team_1}'s spread | {old_spread_team_1} -> {spread_team_1}"
+                if old_money_team_1 != money_team_1 or old_money_team_2 != money_team_2:
+                    #out(uTeam, umLine, fmLine)
+                    firestoreManager.out(underdog, underdog_money, favorite_money)
+                    changed = f"{team_1}'s money | {old_money_team_1} -> {money_team_1}"
 
                 if old_team_1_score != team_1_score or old_team_2_score != team_2_score:
                     #in_(uTeam, uLead, fLead, umLine, fmLine)
                     firestoreManager.in_(underdog, int(underdog_score) - int(favorite_score), int(favorite_score) - int(underdog_score), underdog_money, favorite_money)
                     changed = f"{team_1}'s score | {old_team_1_score} -> {team_1_score}"
-
-                if old_money_team_1 != money_team_1 or old_money_team_2 != money_team_2:
-                    #out(uTeam, umLine, fmLine)
-                    firestoreManager.out(underdog, underdog_money, favorite_money)
-                    changed = f"{team_1}'s money | {old_money_team_1} -> {money_team_1}"
     
+                if old_spread_team_1 != spread_team_1 or old_spread_team_2 != spread_team_2:
+                    #open(league, uTeam, fTeam, uSpread, uLead)
+                    firestoreManager.open(get_league(URL), underdog, favorite, underdog_spread, int(underdog_score) - int(favorite_score))
+                    changed = f"{team_1}'s spread | {old_spread_team_1} -> {spread_team_1}"
+
                 old_team_1_score = team_1_score
                 old_team_2_score = team_2_score
                 old_spread_team_1= spread_team_1
@@ -209,5 +212,6 @@ def run(URL, stdscr):
 
         except NoSuchElementException:
             print("LOCKED")
+            pass
         except StaleElementReferenceException:
             pass
