@@ -9,6 +9,10 @@ from google.cloud import firestore
 import pandas as pd
 import twilioManager
 from datetime import datetime
+import os
+
+credential_path = "/Users/rnemani/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Keep/Documents/Projects/Vegas/mlcoStrategy/Nemani_Pro_Vegas-mlcoStrategy-key.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 def open(league, uTeam, fTeam, uSpread, uLead):
     firestoreRef = firestore.Client(project='vegas-mlcostrategy')
@@ -197,5 +201,5 @@ def remDuplicates(collection):
         collection.document(d).delete()
 
 #CALL: 
-#export()
+export()
 

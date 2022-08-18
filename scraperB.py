@@ -99,9 +99,10 @@ def run(URL, stdscr):
     old_money_team_1= ""
     old_money_team_2= ""
 
-    #keeps running till it hopefully works
-    processThread = threading.Thread(target=time, args=(stdscr,))  # <- note extra ','
-    processThread.start()
+    #Comment these two lines to debug
+    #processThread = threading.Thread(target=time, args=(stdscr,))  # <- note extra ','
+    #processThread.start()
+
     while True:
         try:
             try:
@@ -111,15 +112,11 @@ def run(URL, stdscr):
                 team_1_score = "0"
                 team_2_score = "0"
             
-            spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
-            spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
-            #spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[1]/span').text
-            #spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[4]/span').text
+            spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[1]/span').text
+            spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[4]/span').text
 
-            money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[3]/span').text 
-            money_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[6]/span').text
-            #money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text 
-            #money_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
+            money_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text 
+            money_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
 
             teams = get_team(URL)
 
