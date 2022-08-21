@@ -201,5 +201,5 @@ def remDuplicates(collection):
         collection.document(d).delete()
 
 #CALL: 
-export()
+#export()
 

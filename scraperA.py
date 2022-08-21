@@ -109,8 +109,8 @@ def run(URL, stdscr):
                 team_1_score = driver.find_element('xpath', '(//div[starts-with(@aria-label, "current score")])[1]/span').text
                 team_2_score = driver.find_element('xpath', '(//div[starts-with(@aria-label, "current score")])[2]/span').text
             except NoSuchElementException:
-                team_1_score = "0"
-                team_2_score = "0"
+                team_1_score = "00"
+                team_2_score = "00"
             
             spread_team_1 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
             spread_team_2 = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text

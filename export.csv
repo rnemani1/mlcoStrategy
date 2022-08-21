@@ -1,7 +1,0 @@
-collection,league,uTeam,fTeam,uSpread,uLead,i_uLead,i_fmLine,i_fmlTarget,o_caseHit,o_fmLine,open_ts,in_ts,out_ts,isQ4
-open,nfl,los angeles rams,buffalo bills,+2.5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:41:48,NULL,NULL,NULL
-open,mlb,colorado rockies,st. louis cardinals,+1.5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:28:18,NULL,NULL,NULL
-open,cfl-matches,edmonton elks,ottawa redblacks,+4.5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:50:41,NULL,NULL,NULL
-open,cfl-matches,saskatchewan roughriders,british columbia lions,+5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:51:58,NULL,NULL,NULL
-open,ncaa-football-matches,northwestern,nebraska,+12.5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:49:54,NULL,NULL,NULL
-open,nfl-preseason-matches,chicago bears,seattle seahawks,+3.5,0,NULL,NULL,NULL,NULL,NULL,08/18/2022 02:35:21,NULL,NULL,NULL
