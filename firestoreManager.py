@@ -45,7 +45,7 @@ def open(league, uTeam, fTeam, uSpread, uLead):
 
 def fmlTarget(fmLine):
     
-    target = 0.2
+    target = 0.36
 
     fmLine_float = float(fmLine[1:])
     fmlTarget = (1/((fmLine_float/100)+1))+target
@@ -71,15 +71,13 @@ def in_(uTeam, uLead, fLead, umLine, fmLine):
         else:
             continue
 
-        i_fmlTarget = fmlTarget(i_fmLine)
-
-        if i_uLead > uSpread:
+        if i_uLead > uSpread and i_fmLine[0] == "+":
             document_in = firestoreRef.collection(u'in case').document()
 
             document_in.set({
                 u'i_uLead': i_uLead, 
                 u'i_fmLine': i_fmLine,
-                u'i_fmlTarget': i_fmlTarget,
+                u'i_fmlTarget': fmlTarget(i_fmLine),
                 u'isQ4': 'FALSE',
                 u'league': document.get('league'),
                 u'uTeam': document.get('uTeam'),
