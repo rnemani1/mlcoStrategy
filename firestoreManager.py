@@ -45,7 +45,7 @@ def open(league, uTeam, fTeam, uSpread, uLead):
 
 def fmlTarget(fmLine):
     
-    target = 0.36
+    target = 0.25
 
     fmLine_float = float(fmLine[1:])
     fmlTarget = (1/((fmLine_float/100)+1))+target
