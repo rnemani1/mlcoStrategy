@@ -1,6 +1,5 @@
 from curses import wrapper
-import scraperA
-import scraperB
+import v2Scraper
 import sys
 
 def main(stdscr):
@@ -11,12 +10,14 @@ def main(stdscr):
         scraperCode = sys.argv[2]
 
         if scraperCode == 'A':
-            scraperA.run(URL, stdscr)
+            v2Scraper.runA(URL)
 
         if scraperCode == 'B':
-            scraperB.run(URL, stdscr)
+            v2Scraper.runB(URL)
 
     except IndexError:
         raise Exception("Execute: python3 run.py URL A or: python3 run.py URL B")
 
 wrapper(main)
+
+#python3 run.py URL A or: python3 run.py URL B
