@@ -3,13 +3,10 @@ import time
 from time import sleep
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
-import datetime
-import threading
-import curses
 
 import v2FirestoreManager
 
-from datetime import date
+from datetime import datetime
 
 def runA(URL):
     
@@ -27,15 +24,16 @@ def runA(URL):
         time.sleep(1)
         driver.get(URL)
 
-    while True:
-        try:
+    t1Score_old = '00'
+    t2Score_old = '00'
+    t1Spread_old = '+0.0'
+    t2Spread_old = '+0.0'
+    t1mLine_old = '+000'
+    t2mLine_old = '+000'
 
-            t1Score_old = '00'
-            t2Score_old = '00'
-            t1Spread_old = '+0.0'
-            t2Spread_old = '+0.0'
-            t1mLine_old = '+000'
-            t2mLine_old = '+000'
+    while True:
+         
+        try:
 
             league = get_league(URL)
 
@@ -55,6 +53,9 @@ def runA(URL):
 
                 t1mLine_old = t1mLine
                 t2mLine_old = t2mLine
+                
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Money Line Update {t1mLine} {t2mLine}')
   
             try:
                 t1Score = driver.find_element('xpath', '(//div[starts-with(@aria-label, "current score")])[1]/span').text
@@ -73,6 +74,9 @@ def runA(URL):
                 t1Score_old = t1Score
                 t2Score_old = t2Score
 
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Score Update {t1Score} {t2Score}')
+
             try: 
                 t1Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
                 t2Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
@@ -89,6 +93,9 @@ def runA(URL):
 
                 t1Spread_old = t1Spread
                 t2Spread_old = t2Spread
+
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Spread Update {t1Spread} {t2Spread}')
 
         except NoSuchElementException:
             pass

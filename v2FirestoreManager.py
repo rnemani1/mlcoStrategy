@@ -2,7 +2,6 @@ from pickle import TRUE
 from re import A
 from telnetlib import DO
 from termios import TIOCPKT_DOSTOP
-from this import d
 from dotenv import load_dotenv
 from requests import TooManyRedirects
 load_dotenv(".env", override=True)
@@ -60,7 +59,7 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
         if(d.get('league') == league and (d.get('uTeam') == uTeam or d.get('uTeam') == fTeam)):
 
             if(d.get('uTeam') == uTeam):
-                uLead = uScore - fScore
+                uLead = float(uScore) - float(fScore)
             else:
                 uLead = fScore - uScore
 
@@ -126,9 +125,61 @@ def out(league, uTeam, fTeam, umLine, fmLine):
                     u'fmLine_in': d.get('fmLine_in'),
                     u'fmlTarget': d.get('fmlTarget'),
                     u'ts_in': d.get('ts_in'),
-                    u'fmLine_out': fmLine,
+                    u'fmLine≤_out': fmLine_odds,
                     u'ts_out': str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
                 })
 
                 collection.document(d.id).delete()
         
+def archive():
+    collection_open = firestoreRef.collection('open case')
+    collection_in = firestoreRef.collection('in case')
+    document_archive = firestoreRef.collection('archive case').document()
+
+    for d in collection_open.stream():
+        
+        if(datetime.now() - datetime.strptime(d.get('ts_open'), '%m/%d/%Y %H:%M:%S') > 86400):
+            collection_open.document(d.id).delete()
+
+    for d in collection_in.stream():
+        
+        if(datetime.now() - datetime.strptime(d.get('ts_in'), '%m/%d/%Y %H:%M:%S') > 86400):
+           
+            document_archive.set({
+                u'league': d.get('league'),
+                u'uTeam': d.get('uTeam'),
+                u'fTeam': d.get('fTeam'),
+                u'fSpread': d.get('fSpread'),
+                u'ts_open': d.get('ts_open'),
+                u'uLead': d.get('uLead'),
+                u'fmLine_in': d.get('fmLine_in'),
+                u'fmlTarget': d.get('fmlTarget'),
+                u'ts_in': d.get('ts_in')
+            })
+            
+            collection_in.document(d.id).delete()
+
+def export():
+    #export in, archive, out
+    
+    archive()
+
+    df = pd.DataFrame()
+    data = []
+
+    collection_in = firestoreRef.collection('in case')
+    collection_archive = firestoreRef.collection('archive case')
+    collection_out = firestoreRef.collection('out case')
+
+    for d in collection_in.stream():
+        #'collection','league', 'uTeam', 'fTeam', 'fSpread', 'ts_open', 'uLead', 'fmLine_in', 'fmlTarget', 'ts_in', 'fmLine_out', 'ts_out'
+        data.append(['in', d.get('league'), d.get('uTeam'), d.get('fTeam'), d.get('fSpread'), d.get('ts_open'), d.get('uLead'), d.get('fmLine_in'), d.get('fmlTarget'), d.get('ts_in'), "NULL", "NULL"])
+
+    for d in collection_archive.stream():
+        data.append(['in', d.get('league'), d.get('uTeam'), d.get('fTeam'), d.get('fSpread'), d.get('ts_open'), d.get('uLead'), d.get('fmLine_in'), d.get('fmlTarget'), d.get('ts_in'), "NULL", "NULL"])
+
+    for d in collection_out.stream():
+        data.append(['in', d.get('league'), d.get('uTeam'), d.get('fTeam'), d.get('fSpread'), d.get('ts_open'), d.get('uLead'), d.get('fmLine_in'), d.get('fmlTarget'), d.get('ts_in'), d.get('fmLine_out'), d.get('ts_out')])
+
+    df = pd.DataFrame(data, columns=['collection','league', 'uTeam', 'fTeam', 'fSpread', 'ts_open', 'uLead', 'fmLine_in', 'fmlTarget', 'ts_in', 'fmLine_out', 'ts_out'])
+    df.to_csv(f'export.csv', index=False)

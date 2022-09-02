@@ -19,3 +19,5 @@ def text(case, league, fTeam, fmLine):
             from_ = '+13252465980',
             to = number
         )
+    
+    print(f'{league}: Cash-{case} {fTeam} @{fmLine}')
