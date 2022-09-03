@@ -102,6 +102,7 @@ def runA(URL):
         except StaleElementReferenceException:
             pass
 
+#mLine 2,5 Spread: 1,4
 def runB(URL):
     
     driver = None
@@ -118,21 +119,22 @@ def runB(URL):
         time.sleep(1)
         driver.get(URL)
 
-    while True:
-        try:
+    t1Score_old = '00'
+    t2Score_old = '00'
+    t1Spread_old = '+0.0'
+    t2Spread_old = '+0.0'
+    t1mLine_old = '+000'
+    t2mLine_old = '+000'
 
-            t1Score_old = '00'
-            t2Score_old = '00'
-            t1Spread_old = '+0.0'
-            t2Spread_old = '+0.0'
-            t1mLine_old = '+000'
-            t2mLine_old = '+000'
+    while True:
+         
+        try:
 
             league = get_league(URL)
 
             try:    
-                t1mLine = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
-                t2mLine = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
+                t1mLine = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[3]/span').text
+                t2mLine = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[6]/span').text
             except NoSuchElementException:
                 t1mLine = t1mLine_old
                 t2mLine = t2mLine_old
@@ -140,12 +142,15 @@ def runB(URL):
             #trigger: new mLine
             if t1mLine_old != t1mLine or t2mLine_old != t2mLine:
 
-                teams = get_teams_score(URL, t1Score, t2Score, t1mLine, t2mLine)
+                teams = get_teams_mLine(URL, t1mLine, t2mLine)
 
                 v2FirestoreManager.out(league, teams[0], teams[1], teams[2], teams[3])
 
-                t1Score_old = t1Score
-                t2Score_old = t2Score
+                t1mLine_old = t1mLine
+                t2mLine_old = t2mLine
+                
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Money Line Update {t1mLine} {t2mLine}')
   
             try:
                 t1Score = driver.find_element('xpath', '(//div[starts-with(@aria-label, "current score")])[1]/span').text
@@ -164,9 +169,12 @@ def runB(URL):
                 t1Score_old = t1Score
                 t2Score_old = t2Score
 
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Score Update {t1Score} {t2Score}')
+
             try: 
-                t1Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[1]/span').text
-                t2Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[4]/span').text
+                t1Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[2]/span').text
+                t2Spread = driver.find_element('xpath', '(//div[@role="button" and (span or *[name()="svg"])])[5]/span').text
             except NoSuchElementException:
                 t1Spread = t1Spread_old
                 t2Spread = t2Spread_old
@@ -181,10 +189,14 @@ def runB(URL):
                 t1Spread_old = t1Spread
                 t2Spread_old = t2Spread
 
+                now = str(datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+                print(f'{now}: Spread Update {t1Spread} {t2Spread}')
+
         except NoSuchElementException:
             pass
         except StaleElementReferenceException:
             pass
+
 
 def get_league(URL):
     return(URL.split("/", 10)[4])
