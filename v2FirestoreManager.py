@@ -65,14 +65,14 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
 
             if(uLead > d.get('fSpread')):
                 
-                if(d.get('uTeam') == uTeam):
+                if(d.get('fTeam') == fTeam):
                     fmlTarget = (1/((fmLine/100)+1))+0.10
-                    twilioManager.text('In', league, fTeam, '+'+str(fmLine))
+                    twilioManager.text('In', league, fTeam, '-'+str(fmLine))
                     #TEST: switch '+' to '-'
                 else:
                     fTeam = uTeam
                     fmLine = umLine
-                    twilioManager.text('In', league, fTeam, '-'+str(fmLine))
+                    twilioManager.text('In', league, fTeam, '+'+str(fmLine))
                     #TEST: switch '+' to '-'
                     fmlTarget = (1/((100/fmLine)+1))+0.10
 
@@ -108,12 +108,10 @@ def out(league, uTeam, fTeam, umLine, fmLine):
 
             if(fmLine_odds > d.get('fmlTarget')):
                 
-                if(d.get('uTeam') == uTeam):
-                    twilioManager.text('Out', league, fTeam, '+'+str(fmLine))
-                    #TEST: switched '-' to '+'
-                else:
+                if(d.get('fTeam') == fTeam):
                     twilioManager.text('Out', league, fTeam, '-'+str(fmLine))
-                    #TEST: switch '+' to '1'
+                else:
+                    twilioManager.text('Out', league, fTeam, '+'+str(fmLine))
 
                 document_out.set({
                     u'league': d.get('league'),
