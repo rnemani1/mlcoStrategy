@@ -58,7 +58,7 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
 
         if(d.get('league') == league and (d.get('uTeam') == uTeam or d.get('uTeam') == fTeam)):
 
-            if(d.get('uTeam') == uTeam):
+            if(d.get('fTeam') == fTeam):
                 uLead = float(uScore) - float(fScore)
             else:
                 uLead = fScore - uScore
@@ -68,12 +68,10 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
                 if(d.get('fTeam') == fTeam):
                     fmlTarget = (1/((fmLine/100)+1))+0.10
                     twilioManager.text('In', league, fTeam, '-'+str(fmLine))
-                    #TEST: switch '+' to '-'
                 else:
                     fTeam = uTeam
                     fmLine = umLine
                     twilioManager.text('In', league, fTeam, '+'+str(fmLine))
-                    #TEST: switch '+' to '-'
                     fmlTarget = (1/((100/fmLine)+1))+0.10
 
                 document_in.set({
@@ -89,7 +87,12 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
                 })
 
                 collection.document(d.id).delete()
-                
+
+                for e in collection.stream():
+
+                    if(e.get('league') == league and e.get('fTeam') == fTeam):
+                        collection.document(e.id).delete()
+
 def out(league, uTeam, fTeam, umLine, fmLine):
     
     collection = firestoreRef.collection('in case')
@@ -99,7 +102,7 @@ def out(league, uTeam, fTeam, umLine, fmLine):
 
         if(d.get('league') == league and (d.get('uTeam') == uTeam or d.get('uTeam') == fTeam)):
 
-            if(d.get('uTeam') == uTeam):
+            if(d.get('fTeam') == fTeam):
                 fmLine_odds = 1/((fmLine/100)+1)
             else:
                 fTeam = uTeam
