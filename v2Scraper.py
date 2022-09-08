@@ -1,11 +1,8 @@
 from selenium import webdriver
 import time
-from time import sleep
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
-
 import v2FirestoreManager
-
 from datetime import datetime
 
 def runA(URL):

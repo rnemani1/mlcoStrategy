@@ -1,4 +1,3 @@
-from curses import wrapper
 import v2Scraper
 
 URL = input("Enter a sportsbook.fanduel.com game URL: ")
