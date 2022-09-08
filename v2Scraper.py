@@ -11,7 +11,7 @@ from datetime import datetime
 def runA(URL):
     
     driver = None
-    dPath = '/Users/rnemani/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Keep/Developer/chromedriver'
+    dPath = '/Users/rnemani/Desktop/chromedriver'
 
     options = webdriver.ChromeOptions()
     options.headless = True

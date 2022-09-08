@@ -11,7 +11,7 @@ import twilioManager
 from datetime import datetime
 import os
 
-credential_path = "/Users/rnemani/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Keep/Documents/Projects/Vegas/mlcoStrategy/Nemani_Pro_Vegas-mlcoStrategy-key.json"
+credential_path = "/Users/rnemani/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Keep/Projects/Vegas/mlcoStrategy/Nemani_Pro_Vegas-mlcoStrategy-key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 firestoreRef = firestore.Client(project='vegas-mlcostrategy')
@@ -66,13 +66,15 @@ def in_(league, uTeam, fTeam, uScore, fScore, umLine, fmLine):
             if(uLead > d.get('fSpread')):
                 
                 if(d.get('uTeam') == uTeam):
-                    fmlTarget = (1/((fmLine/100)+1))+0.25
-                    twilioManager.text('In', league, fTeam, '-'+str(fmLine))
+                    fmlTarget = (1/((fmLine/100)+1))+0.10
+                    twilioManager.text('In', league, fTeam, '+'+str(fmLine))
+                    #TEST: switch '+' to '-'
                 else:
                     fTeam = uTeam
                     fmLine = umLine
-                    twilioManager.text('In', league, fTeam, '+'+str(fmLine))
-                    fmlTarget = (1/((100/fmLine)+1))+0.25
+                    twilioManager.text('In', league, fTeam, '-'+str(fmLine))
+                    #TEST: switch '+' to '-'
+                    fmlTarget = (1/((100/fmLine)+1))+0.10
 
                 document_in.set({
                     u'league': d.get('league'),
@@ -92,10 +94,6 @@ def out(league, uTeam, fTeam, umLine, fmLine):
     
     collection = firestoreRef.collection('in case')
     document_out = firestoreRef.collection('out case').document()
-    
-    #for same game
-    #if fmLine > fmlTarget: move document to out case w/ fields o_fmLine, o_ts
-        #Twlio Notification
 
     for d in collection.stream():
 
@@ -111,9 +109,11 @@ def out(league, uTeam, fTeam, umLine, fmLine):
             if(fmLine_odds > d.get('fmlTarget')):
                 
                 if(d.get('uTeam') == uTeam):
-                    twilioManager.text('Out', league, fTeam, '-'+str(fmLine))
-                else:
                     twilioManager.text('Out', league, fTeam, '+'+str(fmLine))
+                    #TEST: switched '-' to '+'
+                else:
+                    twilioManager.text('Out', league, fTeam, '-'+str(fmLine))
+                    #TEST: switch '+' to '1'
 
                 document_out.set({
                     u'league': d.get('league'),
